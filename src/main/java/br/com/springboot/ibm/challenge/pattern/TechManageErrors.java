@@ -10,6 +10,7 @@ public enum TechManageErrors {
     INVALID_PHONE(120, "Invalid Phone Number", HttpStatus.BAD_REQUEST),
     INVALID_BIRTH_DATE(130, "Invalid birth date", HttpStatus.BAD_REQUEST),
     INVALID_USER_TYPE(140,"Invalid User Type.", HttpStatus.BAD_REQUEST),
+    EMAIL_ALREADY_USED(250, "Email already used.", HttpStatus.CONFLICT),
     USER_NOT_FOUND(300,"User Not Registered.", HttpStatus.NOT_FOUND);
 
     private int errorCode;

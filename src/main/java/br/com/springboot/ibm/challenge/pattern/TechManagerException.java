@@ -3,7 +3,7 @@ package br.com.springboot.ibm.challenge.pattern;
 import lombok.Getter;
 
 @Getter
-public class TechManagerException extends RuntimeException{
+public class TechManagerException extends RuntimeException {
 
     private TechManageErrors error;
 
