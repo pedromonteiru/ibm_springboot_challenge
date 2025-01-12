@@ -35,22 +35,30 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.getUserById(id);
-        if(user.isEmpty()){
-            throw new TechManagerException(TechManageErrors.USER_NOT_FOUND);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.status(HttpStatus.OK).body(validUser(userService.getUserById(id)));
     }
 
     @PutMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<Object> updateUserById(@PathVariable Long id, @RequestBody User userUpdated) {
+    public ResponseEntity<Object> updateUserById(@PathVariable Long id, @RequestBody @Valid User userUpdated) {
+        validUser(userService.getUserById(id));
+        userUpdated.setId(id);
+
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userUpdated));
     }
 
     @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<Object> deleteUserById(@RequestBody @Valid User userUpdated) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userUpdated));
+    public ResponseEntity<Object> deleteUserById(@PathVariable Long id) {
+        validUser(userService.getUserById(id));
+        userService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body("");
+    }
+
+    private User validUser(Optional<User> userValidating){
+        if(userValidating.isEmpty()){
+            throw new TechManagerException(TechManageErrors.USER_NOT_FOUND);
+        }
+        return userValidating.get();
     }
 }
