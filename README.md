@@ -1,127 +1,132 @@
-Desafio de Desenvolvimento Back-End com Spring Boot
+Como testar a aplicação TechManager:
 
-Contexto
+# **Pré-requisitos**:
+- MySQL
+- Java 21
+- Insomnia
 
-Você foi contratado para desenvolver a API de backend do sistema TechManage, uma aplicação para gerenciar usuários. O objetivo é criar uma API RESTful utilizando Spring Boot que permita realizar operações básicas de gerenciamento de usuários, conectando a aplicação a um banco de dados relacional.
+# **Configurar MySQL**
+- Abrir o arquivo application.properties
+- Colar a seguinte configuração:
 
-Objetivos do Desafio
+```Application Properties
+spring.application.name=ibm.challenge
 
-    Criar uma API RESTful com Spring Boot que implemente as seguintes operações:
+#Data Source Config
+spring.datasource.url=jdbc:mysql://localhost:3306/{NOME_DO_BANCO}
+spring.datasource.username=root
+spring.datasource.password={SENHA_DO_BANCO}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-        Criar um novo usuário.
+#JPA CONFIG
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.default_schema=MYSQL
 
-        Buscar todos os usuários.
+#Port
+server.port=8080
+```
+>**Atenção**: É necessário criar o banco de dados com o nome caso não possua, e adicionar na linha {NOME_DO_BANCO}, e sua senha no campo {SENHA_DO_BANCO}
+#  **Compilar o programa**
+- Ir no arquivo `/src/main/java/br/com/sprinmgboot/ibm/challenge/Application.java`.
+- Compilar o programa.
 
-        Buscar um usuário por ID.
+# **Testar a aplicação**
+- Copiar os endpoints e utilizar a função do Insomnia *IMPORT FROM CURL*
 
-        Atualizar as informações de um usuário existente.
 
-        Excluir um usuário.
+   1)   ### **Endpoint Adicionar Usuário:**
+        ```
+        curl --request POST \
+           --url http://localhost:8080/api/users 
+            --header 'Content-Type: application/json' 
+            --header 'User-Agent: insomnia/10.1.1' 
+            --data '{
+            "fullName": "Nome Padrão ",
+            "email": "teste@gmail.com",
+            "phone": "+55 14 99999-9999",
+            "birthDate": "12-01-2025",
+            "userType": "EDITOR"
+            }
+        ```
+        #### **Padrão dos campos:**
+  
+        *fullName*: Sem padrões
 
-    Conectar a aplicação a um banco de dados relacional de sua preferência (ex.: MySQL, PostgreSQL, H2, etc.).
-    Implementar validações para os dados recebidos na API.
-    Configurar o projeto para ser executado e testado localmente, com instruções no README.md.
-    Publicar o projeto em um repositório público no GitHub.
+        *email*: xxxx@email.com
+  
+        *phone*: +DDI DDD NNNNN-NNNN
+   
+        *birthDate*: DD - MM - AAAA
 
-Requisitos Técnicos
+        *userType*: EDITOR / ADMIN / VIEWER
+        >**Observação**: DDD e DDI são numéricos de 2 dígitos.
+        
+        >**Observação2**: DD = Dia(2) // MM = Mês(2) // AAAA = Ano(4)
 
-    Entidade User:
 
-        Atributos obrigatórios:
 
-            id (Long): Gerado automaticamente.
+  2)   ### **Endpoint Atualizar Usuário pelo ID:**
+       ```
+       curl --request PUT \
+       --url http://localhost:8080/api/users/{USER_ID} \
+       --header 'Content-Type: application/json' \
+       --header 'User-Agent: insomnia/10.1.1' \
+       --data '{
+       "fullName": "Nome ATT",
+       "email": "testeAtt@gmail.com",
+       "phone": "+55 14 98888-9999",
+       "birthDate": "27-03-1999",
+       "userType": "viewer"
+       }
+       ```
+       #### **Argumento do Endpoint:**
 
-            fullName (String): Nome completo do usuário.
+       *Passar o Id so usuário como argumento*.
 
-            email (String): Único, validado como um e-mail.
+       #### **Padrão dos campos:**
 
-            phone (String): Número de telefone no formato internacional (ex.: +55 11 99999-9999).
+       *fullName*: Sem padrões
 
-            birthDate (Date): Data de nascimento.
+       *email*: xxxx@email.com
 
-            userType (String): Enum com valores possíveis: ADMIN, EDITOR, VIEWER.
+       *phone*: +DDI DDD NNNNN-NNNN
 
-    Operações REST:
+       *birthDate*: xxxx@email.com
 
-        POST /api/users: Adiciona um novo usuário.
+       *userType*: EDITOR / ADMIN / VIEWER
+       >**Observação**: DDD e DDI são numéricos de 2 dígitos.
+       
+       >**Observação2**: DD = Dia(2) // MM = Mês(2) // AAAA = Ano(4)
 
-            O corpo da requisição deve conter os dados do usuário.
 
-            Deve retornar o usuário criado, incluindo o ID gerado.
+  3)   ### **Ver todos usuários:**
+       ```
+       curl --request GET \
+       --url http://localhost:8080/api/users \
+       --header 'Content-Type: application/json' \
+       --header 'User-Agent: insomnia/10.1.1'
+       ```
+       
 
-        GET /api/users: Retorna todos os usuários.
+  4)   ### **Ver usuário pelo ID:**
+       ```
+       curl --request GET \
+       --url http://localhost:8080/api/users/{USER_ID}} \
+       --header 'Content-Type: application/json' \
+       --header 'User-Agent: insomnia/10.1.1'
+       ```
+       #### **Argumento do Endpoint:**
 
-        GET /api/users/{id}: Retorna os dados de um usuário específico.
+       *Passar o Id do usuário como argumento*.
 
-            Deve retornar erro HTTP 404 caso o ID não exista.
 
-        PUT /api/users/{id}: Atualiza os dados de um usuário.
+5)   ### **Deletar usuário pelo ID:**
+     ```
+     curl --request DELETE \
+     --url http://localhost:8080/api/users/{USER_ID} \
+     --header 'Content-Type: application/json' \
+     --header 'User-Agent: insomnia/10.1.1'
+     ```
 
-            Deve validar os campos enviados.
-
-        DELETE /api/users/{id}: Exclui um usuário.
-
-            Deve retornar erro HTTP 404 caso o ID não exista.
-
-    Banco de Dados:
-
-        Use um banco de dados relacional da sua preferência.
-        Configure a aplicação para rodar com Spring Data JPA.
-        Inclua scripts SQL para criar as tabelas e, opcionalmente, dados iniciais no banco.
-
-    Validações:
-
-        Utilize Bean Validation para validar os dados recebidos na API (ex.: e-mail válido, nome não vazio, etc.).
-
-    Testes:
-
-        Crie testes unitários para os serviços.
-        Crie ao menos um teste de integração para os endpoints da API.
-
-    Documentação:
-
-        Inclua no README.md:
-
-            Passos para rodar o projeto localmente.
-
-            Exemplos de requisições para cada endpoint.
-
-Critérios de Avaliação
-
-    Qualidade do Código:
-
-        Boas práticas de Java e Spring Boot.
-
-        Uso correto de camadas (Controller, Service, Repository).
-
-        Organização e modularização do código.
-
-        A entrega de testes unitários será um diferencial.
-
-    Banco de Dados:
-
-        Estrutura das tabelas.
-        Uso correto do JPA.
-
-    Validações e Tratamento de Erros:
-
-        Implementação de validações.
-        Respostas claras e adequadas para erros (ex.: 404, 400).
-
-    Documentação:
-
-        Clareza e completude do README.md.
-        Facilidade para configurar e rodar o projeto.
-
-    GitHub:
-
-        Estrutura do repositório.
-        Histórico de commits (commits organizados e mensagens claras).
-        Envie o link do repositório no GitHub como resposta a esse e-mail.
-
-Instruções de Entrega
-
-    Crie um repositório público no GitHub.
-    Implemente a solução seguindo os requisitos.
-    Garanta que o projeto possa ser executado localmente seguindo as instruções do README.md.
-    Envie o link do repositório no GitHub.
+     #### **Argumento do Endpoint:**
+     *Passar o Id do usuário como argumento*.
